@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -5,14 +6,14 @@ import java.util.Map;
 public class Confirm_User_List_Message extends Message {
 
 
-  private Map<String, List<String>> information;
+  private List<User> information;
 
-  public Confirm_User_List_Message(String source, String dest, Map<String, List<String>> information) {
+  public Confirm_User_List_Message(String source, String dest, List<User> information) {
     super(Type.CONFIRM_USER_LIST, source, dest);
-    this.information = new HashMap<>(information);
+    this.information = new ArrayList<>(information);
   }
 
-  public Map<String, List<String>> getInformation() {
+  public List<User> getInformation() {
     return this.information;
   }
 }

@@ -11,4 +11,16 @@ public class User {
     this.hostip = hostip;
     this.files = files;
   }
+
+  public String getId() {
+    return id;
+  }
+
+  public String getHostip() {
+    return hostip;
+  }
+
+  public List<String> getFiles() {
+    return files;
+  }
 }

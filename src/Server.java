@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 public class Server {
 
   private Map<String, Socket> users;
-  private Map<String, List<String>> information;
+  private List<User> information;
   private static final String ip = "192.168.1.56";
   private int port;
   private ServerSocket serverSocket;
@@ -16,7 +17,7 @@ public class Server {
   private Server(int port) {
     this.port = port;
     this.users = new HashMap<String, Socket>();
-    this.information = new HashMap<String, List<String>>();
+    this.information = new ArrayList<>();
   }
 
   public Map<String, Socket> getUsers() {
@@ -29,16 +30,16 @@ public class Server {
 
   public void removeUser(String user) {
     users.remove(user);
-    information.remove(user);
+    information.removeIf(x -> x.getId().equals(user));
   }
 
-  public Map<String, List<String>> getInformation() {
+  public List<User> getInformation() {
     return information;
   }
 
   public String getFileOwner(String file) {
-    for(Map.Entry<String, List<String>> entry : information.entrySet()) {
-      if(entry.getValue().contains(file)) return entry.getKey();
+    for(User u : information) {
+      if(u.getFiles().contains(file)) return u.getId();
     }
     return null;
   }
@@ -47,7 +48,7 @@ public class Server {
     return users.get(user);
   }
 
-  public void setInformation(Map<String, List<String>> information) {
+  public void setInformation(List<User> information) {
     this.information = information;
   }
 

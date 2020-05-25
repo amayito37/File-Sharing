@@ -8,4 +8,12 @@ public class Issue_Message extends Message {
     this.file = file;
     this.user = user;
   }
+
+  public String getFile() {
+    return file;
+  }
+
+  public String getUser() {
+    return user;
+  }
 }

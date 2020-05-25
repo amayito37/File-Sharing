@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 
+//TODO: proteger los accesos a las cosas
 public class ClientHandler extends Thread {
 
   private Socket socket;
