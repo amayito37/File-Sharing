@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.List;
 
-public class User {
+public class User implements Serializable {
 
   private String id;
   private String hostip;
@@ -22,5 +23,14 @@ public class User {
 
   public List<String> getFiles() {
     return files;
+  }
+
+  @Override
+  public String toString() {
+    return "User{" +
+        "id='" + id + '\'' +
+        ", hostip='" + hostip + '\'' +
+        ", files=" + files +
+        '}';
   }
 }

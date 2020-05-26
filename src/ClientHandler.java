@@ -1,22 +1,19 @@
 import java.io.*;
 import java.net.Socket;
 
-//TODO: proteger los accesos a las cosas
+
 public class ClientHandler extends Thread {
 
   private Socket socket;
-  private InputStream is;
-  private OutputStream os;
+  private ObjectInputStream reader;
+  private ObjectOutputStream writer;
   private Server server;
 
-  public ClientHandler(Socket socket, Server server) {
+  public ClientHandler(Socket socket, Server server, ObjectInputStream reader,
+                       ObjectOutputStream writer) {
     this.socket = socket;
-    try {
-      this.is = socket.getInputStream();
-      this.os = socket.getOutputStream();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    this.reader = reader;
+    this.writer = writer;
     this.server = server;
   }
 
@@ -24,9 +21,6 @@ public class ClientHandler extends Thread {
   public void run() {
 
     try {
-      ObjectInputStream reader = new ObjectInputStream(is);
-      ObjectOutputStream writer = new ObjectOutputStream(os);
-
       exec: while (true) {
         Message m = (Message) reader.readObject();
         switch (m.getType()) {

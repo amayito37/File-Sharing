@@ -37,15 +37,17 @@ public class Client {
   private void run() {
     System.out.print("Input user Id: ");
     userId = scanner.next();
+    System.out.println("Hello " + userId);
     try {
       socket = new Socket(HOSTNAME, port);
-      Thread t = new ServerHandler(socket, this);
-      t.start();
-      is = socket.getInputStream();
-      reader = new ObjectInputStream(is);
       os = socket.getOutputStream();
       writer = new ObjectOutputStream(os);
-      writer.writeObject(new Connect_Message(userId, "server"));
+      writer.flush();
+      is = socket.getInputStream();
+      reader = new ObjectInputStream(is);
+      Thread t = new ServerHandler(socket, this, reader, writer);
+      t.start();
+      writer.writeObject(new Connect_Message(userId, "server", userId));
       menu();
     } catch (IOException e) {
       e.printStackTrace();

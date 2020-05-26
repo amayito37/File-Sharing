@@ -1,29 +1,22 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 public class ServerHandler extends Thread{
 
   private Socket socket;
-  private InputStream is;
-  private OutputStream os;
   private ObjectInputStream reader;
   private ObjectOutputStream writer;
   private Client client;
   private int port;
 
-  public ServerHandler(Socket socket, Client client) {
+  public ServerHandler(Socket socket, Client client, ObjectInputStream reader,
+                       ObjectOutputStream writer) {
     this.socket = socket;
     this.client = client;
     this.port = client.getPort() + 1;
-    try {
-      this.is = socket.getInputStream();
-      this.os = socket.getOutputStream();
-      this.reader = new ObjectInputStream(is);
-      this.writer = new ObjectOutputStream(os);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+    this.writer = writer;
+    this.reader = reader;
   }
 
   @Override
@@ -38,7 +31,7 @@ public class ServerHandler extends Thread{
 
           case CONFIRM_USER_LIST:
             System.out.println("The user list is: ");
-            System.out.println(((Confirm_User_List_Message)m).getInformation());
+            printUserList(((Confirm_User_List_Message)m).getInformation());
             break;
 
           case ISSUE:
@@ -58,6 +51,16 @@ public class ServerHandler extends Thread{
         }
       } catch (IOException | ClassNotFoundException e) {
         e.printStackTrace();
+      }
+    }
+  }
+
+  private void printUserList(List<User> userList) {
+    System.out.println("Size: " + userList.size());
+    for (User user : userList) {
+      System.out.println(user.getId() + ":");
+      for(String s : user.getFiles()) {
+        System.out.println("  " + s);
       }
     }
   }
