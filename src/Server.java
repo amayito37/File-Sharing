@@ -9,7 +9,7 @@ import java.util.Map;
 //TODO read information from file users.txt
 public class Server {
 
-  private Map<String, Socket> users;
+  private Map<String, ObjectOutputStream> users; // we only need to write to them remotely
   private List<User> information;
   private static final String ip = "192.168.1.56";
   private static final String userFile = "users.txt";
@@ -18,16 +18,16 @@ public class Server {
 
   private Server(int port) {
     this.port = port;
-    this.users = new HashMap<String, Socket>();
+    this.users = new HashMap<String, ObjectOutputStream>();
     this.information = new ArrayList<>();
   }
 
-  public Map<String, Socket> getUsers() {
+  public Map<String, ObjectOutputStream> getUsers() {
     return users;
   }
 
-  public synchronized void addUser(String user, Socket socket) {
-    this.users.put(user,socket);
+  public synchronized void addUser(String user, ObjectOutputStream os) {
+    this.users.put(user, os);
   }
 
   public synchronized void removeUser(String user) {
@@ -47,7 +47,7 @@ public class Server {
     return null;
   }
 
-  public synchronized Socket getSocket(String user) {
+  public synchronized ObjectOutputStream getOutputStream(String user) {
     return users.get(user);
   }
 
@@ -78,8 +78,9 @@ public class Server {
     if (args.length < 1) return;
 
     int port1 = Integer.parseInt(args[0]);
+    FreePortGenerator freePortGenerator = FreePortGenerator.getFreePortGenerator(port1);
 
-    Server server = new Server(port1);
+    Server server = new Server(freePortGenerator.getFreePort());
 
     try {
       server.run();

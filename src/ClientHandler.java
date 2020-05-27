@@ -26,7 +26,7 @@ public class ClientHandler extends Thread {
         switch (m.getType()) {
 
           case CONNECT:
-            server.addUser(((Connect_Message)m).getUser_id(), socket);
+            server.addUser(((Connect_Message)m).getUser_id(), writer);
 	          writer.writeObject(new Confirm_Connect_Message("server",
                 ((Connect_Message)m).getUser_id()));
             break;
@@ -46,16 +46,14 @@ public class ClientHandler extends Thread {
 
           case REQUEST:
             String user = server.getFileOwner(((Request_Message)m).getFile());
-            OutputStream fout2 = server.getSocket(user).getOutputStream();
-            ObjectOutputStream requester = new ObjectOutputStream(fout2);
+            ObjectOutputStream requester = server.getOutputStream(user);
             requester.writeObject(new Issue_Message("server", user,
                 ((Request_Message)m).getFile(), m.getSource()));
             break;
 
           case READY_CLIENTSERVER:
-            OutputStream fout1 =
-                server.getSocket(((Ready_ClientServer_Message)m).getUser()).getOutputStream();
-            ObjectOutputStream issuer = new ObjectOutputStream(fout1);
+            ObjectOutputStream issuer =
+              server.getOutputStream(((Ready_ClientServer_Message)m).getUser());
             issuer.writeObject(new Ready_ServerClient_Message("server",
                 ((Ready_ClientServer_Message)m).getUser(),
                 ((Ready_ClientServer_Message)m).getHost_ip(),

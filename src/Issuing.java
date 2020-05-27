@@ -23,14 +23,12 @@ public class Issuing extends Thread {
   public void run() {
     try {
       ServerSocket serverSocket = new ServerSocket(port);
-      while(true) {
-        Socket socket = serverSocket.accept();
-        InputStream is = socket.getInputStream();
-        OutputStream os = socket.getOutputStream();
-        ObjectInputStream reader = new ObjectInputStream(is);
-        ObjectOutputStream writer = new ObjectOutputStream(os);
-        sendFile(writer);
-      }
+      Socket socket = serverSocket.accept();
+      InputStream is = socket.getInputStream();
+      OutputStream os = socket.getOutputStream();
+      ObjectInputStream reader = new ObjectInputStream(is);
+      ObjectOutputStream writer = new ObjectOutputStream(os);
+      sendFile(writer);
     } catch (IOException e) {
       e.printStackTrace();
     }

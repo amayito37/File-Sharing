@@ -14,9 +14,13 @@ public class Receiver extends Thread {
   public void run() {
     try {
       Socket socket = new Socket(Client.HOSTNAME, port);
+      ObjectOutputStream writer = new ObjectOutputStream(socket.getOutputStream()); // just so
+      // the reader creates correctly
+      writer.flush();
       ObjectInputStream reader = new ObjectInputStream(socket.getInputStream());
       File_Message message = (File_Message) reader.readObject();
       File file = new File(FOLDER + "\\" + message.getName());
+      file.createNewFile(); // file was giving problems otherwise
       OutputStream os = new FileOutputStream(file);
       os.write(message.getFile());
       while(!message.isLast()) {

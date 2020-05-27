@@ -8,13 +8,11 @@ public class ServerHandler extends Thread{
   private ObjectInputStream reader;
   private ObjectOutputStream writer;
   private Client client;
-  private int port;
 
   public ServerHandler(Socket socket, Client client, ObjectInputStream reader,
                        ObjectOutputStream writer) {
     this.socket = socket;
     this.client = client;
-    this.port = client.getPort() + 1;
     this.writer = writer;
     this.reader = reader;
   }
@@ -35,14 +33,18 @@ public class ServerHandler extends Thread{
             break;
 
           case ISSUE:
-            Issuing issuing = new Issuing(client, port, ((Issue_Message)m).getUser(),
+            int port = FreePortGenerator.getFreePortGenerator().getFreePort();
+            Issuing issuing = new Issuing(client, port,
+                ((Issue_Message)m).getUser(),
                 ((Issue_Message)m).getFile());
+            issuing.start();
             writer.writeObject(new Ready_ClientServer_Message(client.getUserId(), "server",
-                ((Issue_Message)m).getUser(), Client.HOSTNAME, port));
+                ((Issue_Message)m).getUser(), Client.HOSTNAME, (port)));
             break;
 
           case READY_SERVERCLIENT:
-            Receiver receiver = new Receiver(port);
+            Receiver receiver = new Receiver(((Ready_ServerClient_Message)m).getPort());
+            receiver.start();
             break;
 
           case CONFIRM_DISCONNECT:
