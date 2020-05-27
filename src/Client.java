@@ -14,10 +14,12 @@ public class Client {
   private ObjectOutputStream writer;
   private ObjectInputStream reader;
   private Scanner scanner;
+  private UserPrinter userPrinter; // for printing messages to user
 
   private Client(int port) {
     this.port = port;
     this.scanner = new Scanner(System.in);
+    this.userPrinter = new UserPrinter();
   }
 
   public String getUserId() {
@@ -28,6 +30,10 @@ public class Client {
     return port;
   }
 
+  public UserPrinter getUserPrinter() {
+    return userPrinter;
+  }
+
   public static void main(String args[]) {
     if(args.length < 1) return;
     Client client = new Client(Integer.parseInt(args[0]));
@@ -35,9 +41,9 @@ public class Client {
   }
 
   private void run() {
-    System.out.print("Input user Id: ");
+    userPrinter.directPrint("Input user Id: ");
     userId = scanner.next();
-    System.out.println("Hello " + userId);
+    userPrinter.directPrint("Hello " + userId);
     try {
       socket = new Socket(HOSTNAME, port);
       os = socket.getOutputStream();
@@ -54,13 +60,16 @@ public class Client {
     }
   }
 
+  /*
+    Generates the menu for the user and handles his requests
+   */
   private void menu() throws IOException {
     int option;
     do {
-      System.out.println("Select an option:");
-      System.out.println("1.- Check user list.");
-      System.out.println("2.- Request a file.");
-      System.out.println("0.- Disconnect.");
+      userPrinter.directPrint("Select an option:");
+      userPrinter.directPrint("1.- Check user list.");
+      userPrinter.directPrint("2.- Request a file.");
+      userPrinter.directPrint("0.- Disconnect.");
       option = scanner.nextInt();
       switch (option) {
         case 1:
@@ -68,7 +77,7 @@ public class Client {
           break;
 
         case 2:
-          System.out.print("What's the name of the file you want? ");
+          userPrinter.directPrint("What's the name of the file you want? ");
           String file = scanner.next();
           writer.writeObject(new Request_Message(userId, "server", file));
           break;

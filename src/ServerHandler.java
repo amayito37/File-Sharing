@@ -8,6 +8,7 @@ public class ServerHandler extends Thread{
   private ObjectInputStream reader;
   private ObjectOutputStream writer;
   private Client client;
+  private UserPrinter userPrinter;
 
   public ServerHandler(Socket socket, Client client, ObjectInputStream reader,
                        ObjectOutputStream writer) {
@@ -15,6 +16,7 @@ public class ServerHandler extends Thread{
     this.client = client;
     this.writer = writer;
     this.reader = reader;
+    this.userPrinter = client.getUserPrinter();
   }
 
   @Override
@@ -24,11 +26,11 @@ public class ServerHandler extends Thread{
         Message m = (Message) reader.readObject();
         switch (m.getType()) {
           case CONFIRM_CONNECT:
-            System.out.println("Connection with server established successfully");
+            userPrinter.otherInfoPrint("Connection with server established successfully");
             break;
 
           case CONFIRM_USER_LIST:
-            System.out.println("The user list is: ");
+            userPrinter.otherInfoPrint("The user list is: ");
             printUserList(((Confirm_User_List_Message)m).getInformation());
             break;
 
@@ -48,7 +50,7 @@ public class ServerHandler extends Thread{
             break;
 
           case CONFIRM_DISCONNECT:
-            System.out.println("You are now disconnected from server");
+            userPrinter.otherInfoPrint("You are now disconnected from server");
             break exec;
         }
       } catch (IOException | ClassNotFoundException e) {
@@ -58,11 +60,11 @@ public class ServerHandler extends Thread{
   }
 
   private void printUserList(List<User> userList) {
-    System.out.println("Size: " + userList.size());
+    userPrinter.otherInfoPrint("Size: " + userList.size());
     for (User user : userList) {
-      System.out.println(user.getId() + ":");
+      userPrinter.otherInfoPrint(user.getId() + ":            ");
       for(String s : user.getFiles()) {
-        System.out.println("  " + s);
+        userPrinter.otherInfoPrint(s);
       }
     }
   }

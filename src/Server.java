@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO read information from file users.txt
+/**
+ * This is the main server, this accepts new users and puts them in touch with other users
+ */
 public class Server {
 
   private Map<String, ObjectOutputStream> users; // we only need to write to them remotely
@@ -26,6 +28,9 @@ public class Server {
     return users;
   }
 
+  /*
+    As we are going to modify the information concurrently we need to protect it
+   */
   public synchronized void addUser(String user, ObjectOutputStream os) {
     this.users.put(user, os);
   }
@@ -78,8 +83,11 @@ public class Server {
     if (args.length < 1) return;
 
     int port1 = Integer.parseInt(args[0]);
+    //So that we are guaranteed that the ports we use are free
     FreePortGenerator freePortGenerator = FreePortGenerator.getFreePortGenerator(port1);
 
+    //We create an instance of our own class, could be done in another function but I think is
+    // not worth it
     Server server = new Server(freePortGenerator.getFreePort());
 
     try {
